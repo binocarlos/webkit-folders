@@ -1,7 +1,7 @@
 <?php defined('SYSPATH') OR die('No direct access allowed.');
 
 // the path to the image magick executables
-$config['image_magick_bin'] = '/usr/local/bin';
+$config['image_magick_bin'] = '/usr/bin';
 
 // this can be overriden in the application config
 // therefore this just serves as a default
