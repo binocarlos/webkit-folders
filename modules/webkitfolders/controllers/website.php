@@ -129,6 +129,7 @@ class Website_Controller extends Controller
 		// this gets a full path for the file
 		if(preg_match('/^\/uploaded_files\//', $uri, $match))
 		{
+			$uri = str_replace('/uploaded_files//uploaded_files', '', $uri);
 			$uri = str_replace('/uploaded_files', '', $uri);
 	
 			$full_path = Kohana::config('webkitfolders.full_upload_folder').$uri;
