@@ -1,0 +1,112 @@
+changelog - 25-10-2009
+
+- need the admin app to use customer error handling that will throw
+expections back to EXT if there is a problem
+
+in controller:
+
+try {
+	model stuff
+} catch Webkit_Ext_Exception;
+	
+	
+- itemView needs to have several tabs - you need to be able to say: 
+
+	open item in new tab
+	open item in current tab
+	open item split-screen
+	
+every time a new item is opened in this way - the itemView needs to be able to add
+tabs to accomodate the new view
+	
+	
+- need to do the generic item loader - i.e. items will always be loaded via ajax
+stored in an item cache and then provided to the iterface (tree included)
+
+- this will give us a consistent way of dealing with item data from the client
+
+
+- need to insert custom authentication handlers
+
+	these will know that username/password combinations live elsewhere
+	an can check against those sources primarily
+	
+	if no user is found with the custom auth handler - it can pass control
+	to the default handler to authenticate normally (i.e. against installation users)
+	
+	there are different types of users:
+	
+		root
+		--------------------------------
+		username = root
+		password = defiend in webkitfolders/conf/webkitfoldersinstallation.php
+		auth_handler = Root
+		--------------------------------
+		the only person that can access the /root scripts to manage installations
+		the password is set in the config/webkitfoldersinstallation.php in the webkitfolders module
+		
+		need to allow the root user to login to the admin panel also - would be neat to line
+		up all installations for the root user
+		
+		
+		
+		
+		admin 
+		--------------------------------
+		username = admin
+		password = there is a password field for each installation
+		auth_handler = InternalAdmin
+		
+		or
+		
+		username & password defined by external source (e.g. different database table / server)
+		auth_handler = ExternalAdmin
+		--------------------------------
+		an admin user always belongs to an installation - it is the job of the auth handler 
+		to specify which installation
+		
+		in the case of an internal_admin - the installation id will be set by the domain
+		the user is accessing on - the password is then defined by the installation record
+		in the database
+		
+		in te case of an external admin - the auth_handler must do the job of mapping
+		an installation_id given the login details
+		
+		an admin can do anything inside of one installation - because the user is defined
+		outside of the item_tree - the internal user permissions do not apply
+		
+		item user
+		--------------------------------
+		username & password defined by item in database - username is email address
+		auth_handler = InternalUser
+		
+		or
+		
+		username & password defined by external source (e.g. different database table / server)
+		auth_handler = ExternalUser
+		--------------------------------
+		an item user is one defined by the presence of a user in the item_tree with the
+		given details
+		
+		in both cases the installation_id is already known by the server_name
+		
+		the result of an item_user logging in MUST be that a user is present in the item_tree
+		for the details given
+		
+		If the handler is internal - it is simlpy a check of the details
+		
+		if the handler is external - it will:
+		
+			- connect to its remote source to authenticate the details provided
+			
+			- it will then check the item_tree to see if there is a user with those details
+			already created
+			
+			- if there is not a user for the login - it will create one so next time
+			the same login will point to the same user item
+			
+		Therefore the external auth handler dosn't try and overtake the actual authentication
+		- it always checks with the remote source at the point of login
+		
+		For the rest of the session however - it will have an internal reference to the 
+		item_user the current session is for

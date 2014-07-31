@@ -1,0 +1,25 @@
+changelog - 22-10-2009
+	
+Order of things to do:
+
+1. create installation
+
+2. paths for items
+
+3. Get the query parser so it understands new format
+
+4. the query model constructing the SQL queries for each type of request and build the results : )
+
+5. the rest of the system using the queries for access to data
+
+6. ext application agnostic item data loading (it loads data and creates Records for Stores)
+
+7. Finish off menus - right click tree etc
+
+8. insert top level folders (users / models / bin / disk) below system
+
+9. ordering - drag & drop
+
+10. paging
+
+11. Model Creator	

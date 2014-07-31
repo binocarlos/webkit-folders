@@ -1,0 +1,7 @@
+http://www.webtatic.com/blog/2009/06/php-530-on-centos-5/
+
+DONT FORGET:
+
+pcre.backtrack_limit = 1000000
+
+in php.ini

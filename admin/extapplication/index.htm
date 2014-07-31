@@ -1,0 +1,110 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Admin</title>
+	
+	<!-- test -->
+	
+	<!-- 
+	<link rel="stylesheet" type="text/css" href="../app/admin/get_icon_css" />
+	-->
+	
+	<!-- REPLACE /ext with the URI to your ext installation - relative or absolute is fine -->
+	<link rel="stylesheet" type="text/css" href="../ext/resources/css/ext-all.css" />
+	
+	<link rel="stylesheet" type="text/css" href="css/App.css" />
+	<link rel="stylesheet" type="text/css" href="css/adminApp.css" />
+	<link rel="stylesheet" type="text/css" href="css/MultiSelect.css" />
+	
+</head>
+<body scroll="no" id="bodyElem">
+	<div id="message-div" style="width:300px;"></div>
+	<div id="loading-mask" style=""></div>
+	<div id="loading">
+		
+		<!-- REPLACE /img/xaralogo.png with the URI of a logo you want to display when loading the adminApp -->
+		<div class="loading-indicator"><img src="/adminlogo.png" style="" align="absmiddle"/></div>
+		
+	</div>
+
+
+	
+	<!-- DEV INCLUDES -->
+	<!-- REPLACE /ext with the URI to your ext installation - relative or absolute is fine -->
+	
+	<!--
+ 	<script type="text/javascript" src="../ext/adapter/ext/ext-base-debug.js"></script>
+	<script type="text/javascript" src="../ext/ext-all-debug.js"></script>
+	-->
+		
+		
+		
+
+	<!-- PRODUCTION INCLUDES -->
+	<!-- REPLACE /ext with the URI to your ext installation - relative or absolute is fine -->
+
+	<!--<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>-->
+	<script type="text/javascript" src="libraries/jquery-1.4.2.min.js"></script>
+
+ 	<!--<script type="text/javascript" src="../ext/adapter/ext/ext-base.js"></script>-->
+ 	<script type="text/javascript" src="../ext/adapter/jquery/ext-jquery-adapter.js"></script>
+	<script type="text/javascript" src="../ext/ext-all-debug.js"></script>
+	
+
+
+    	<!-- APP INCLUDES -->
+	<script type="text/javascript" src="libraries/App.js"></script>
+	<script type="text/javascript" src="libraries/Extras.js"></script>
+	<script type="text/javascript" src="libraries/MultiSelect.js"></script>
+	
+	<script type="text/javascript" src="../ext/tiny_mce/tiny_mce.js"></script> 
+	<script type="text/javascript" src="../ext/tiny_mce/Ext.ux.TinyMCE.js"></script> 
+
+	<script type="text/javascript" src="app/adminApp.js"></script>
+	
+	<script type="text/javascript" src="app/itemLoader.js"></script>
+	<script type="text/javascript" src="app/itemTree.js"></script>
+	
+	<script type="text/javascript" src="app/itemForm.js"></script>
+	
+	<script type="text/javascript" src="app/itemView.js"></script>
+	<script type="text/javascript" src="app/itemViewTabPanel.js"></script>
+	<script type="text/javascript" src="app/itemViewStore.js"></script>
+	<script type="text/javascript" src="app/itemViewDataView.js"></script>
+	
+	<script type="text/javascript" src="app/item.js"></script>
+	<script type="text/javascript" src="app/schema.js"></script>
+	<script type="text/javascript" src="app/itemFields.js"></script>
+	<script type="text/javascript" src="app/fileUploadField.js"></script>
+	
+	<script type="text/javascript" src="app/language.js"></script>
+	
+	<script type="text/javascript" src="app/iconFactory.js"></script>
+
+	<script>
+		////////////////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////////////////
+		// This is the creation of the folders admin app - you must change the webApplicationURI property to reflect
+		// where you have told apache the admin web app lives (i.e. look at the redirect rule inside the virtual host)
+		
+		var appUri = document.location.href;
+		
+		var parts = appUri.split('?');
+		
+		var webAppURI = parts[1];
+		
+		if((webAppURI==null)||(webAppURI==""))
+		{
+			webAppURI = 'app';
+		}
+		
+		var theApplication = new Webkit.Folders.AdminApp({
+			webapplicationURI:'/' + webAppURI
+		});
+			
+	</script>
+
+	<div id="tooltip-div"></div>
+</body>
+</html>
+ 

@@ -1,0 +1,180 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Admin</title>
+
+<script>
+
+	function doOldStyleDemo()
+	{
+		var htmlElement = document.getElementById('testDiv');
+		
+		htmlElement.style.backgroundColor = '#ff0000';
+	}
+	
+	function doExtDemo()
+	{
+		var extElement = new Ext.Element('testDiv');
+		
+		/*
+		
+		// this is the same thing as the htmlElement in the above method
+		var htmlElement = extElement.dom;
+		
+		htmlElement.style.backgroundColor = '#ff0000';
+		
+		*/
+		
+		//extElement.setY(300, true);
+		//extElement.ghost();
+		
+		/*
+		extElement.ghost('b', {
+    		easing: 'easeOut',
+    		duration: .5,
+    		remove: false,
+    		useDisplay: false
+		});    		
+    	*/
+    	
+    	//extElement.frame();
+    	
+    	//extElement.puff();
+    	
+    	/*
+    	This is an example of creating all the things seperately and then putting
+    	them back together again
+    	
+    	var myPanel = new Ext.Panel({
+    		renderTo:'testDiv',
+    		width:300,
+    		height:300
+    	});
+    	
+    	var myButton = new Ext.Button({
+    		text:'Hello World' });
+    	
+		myPanel.add(myButton);
+		myPanel.doLayout();
+		
+		myButton.addListener('click', buttonClick);
+		*/
+		
+		/*
+		This is an example of creating things in the correct order so you don't
+		have to re-render anything
+		
+		var myButton = new Ext.Button({
+    		text:'Hello World' });
+		
+		var myPanel = new Ext.Panel({
+    		renderTo:'testDiv',
+    		width:300,
+    		height:300,
+    		items:[
+    			myButton
+    		]
+    	});
+    	*/
+    	
+    	// an example of creating things using xtype
+    	
+    	var myMenu = new Ext.menu.Menu({
+    		items:[
+				{id:'option1', text:'klj KLHJ DLKFJ LDKJ JKDF'},
+    			{id:'option2', text:'world'}
+    		]
+    	});
+    			
+    	var toolbar = new Ext.Toolbar({
+    		region:'north',
+    		items:[
+    			{
+    				xtype:'button',
+    				text:'File',
+    				menu:myMenu
+    			},'-',{
+    				xtype:'button',
+    				text:'Color',
+    				menu:
+    					{xtype:'colormenu'}
+    			}
+    		]
+    	});
+    	
+    	myMenu.addListener('click', menuClick);
+    	
+    	var myPanel = new Ext.Panel({
+    		renderTo:'testDiv',
+    		layout:'border',
+    		width:300,
+    		height:300,
+    		
+    		items:[
+    		{
+    			html:'This is the left hand sidebar',
+    			
+    			region:'west',
+    			xtype:'panel'
+    		},{
+    			html:'This is the main center region',
+    			tbar:toolbar,
+    			region:'center',
+    			xtype:'panel'
+    		}
+    			
+    		]
+    	});
+		
+	}
+	
+	function menuClick(menu, menuItem)
+	{
+		if(menuItem.id=='option1')
+		{
+			alert('yo');
+		}
+			
+	}
+	function buttonClick(buttonObj, eventObj)
+	{
+		alert(buttonObj.getId());	
+	}
+	
+		
+</script>
+	
+	<!-- test -->
+	
+	<!-- 
+	<link rel="stylesheet" type="text/css" href="../app/admin/get_icon_css" />
+	-->
+	
+	<!-- REPLACE /ext with the URI to your ext installation - relative or absolute is fine -->
+	<link rel="stylesheet" type="text/css" href="../ext/resources/css/ext-all.css" />
+	<link rel="stylesheet" type="text/css" href="css/adminApp.css" />
+	
+</head>
+<body scroll="no" id="bodyElem" style="padding:20px;">
+	
+
+
+	
+	<!-- DEV INCLUDES -->
+	<!-- REPLACE /ext with the URI to your ext installation - relative or absolute is fine -->
+	
+ 	<script type="text/javascript" src="../ext/adapter/ext/ext-base-debug.js"></script>
+	<script type="text/javascript" src="../ext/ext-all-debug.js"></script>
+	
+
+	<div id="testDiv">
+		
+	</div>
+	
+	
+	<script>
+		Ext.onReady(doExtDemo);
+	</script>
+</body>
+</html>
+ 

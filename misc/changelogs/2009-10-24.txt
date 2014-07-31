@@ -1,0 +1,61 @@
+changelog - 24-10-2009
+
+CREATE TABLE `xaracom_dev`.`domain` (`id` INT UNSIGNED NOT NULL AUTO_INCREMENT, `installation_id` INT UNSIGNED NOT NULL, `name` VARCHAR (64) DEFAULT 'default' NOT NULL, PRIMARY KEY(`id`), INDEX(`id`,`installation_id`)) TYPE = MyISAM /*!40100 DEFAULT CHARSET utf8 COLLATE utf8_general_ci */ ;
+
+ALTER TABLE `domain` DROP INDEX `id`, ADD INDEX `id` (`id`, `installation_id`, `name`);
+
+ALTER TABLE `item_link` ADD `domain_id` INT UNSIGNED NOT NULL AFTER `installation_id` ;
+
+ALTER TABLE `item_link` DROP INDEX `id`, ADD INDEX `id` (`id`, `item_id`, `parent_item_id`, `l`, `r`, `installation_id`, `parent_link_id`, `domain_id`) ;
+
+ALTER TABLE `domain` RENAME `system`;
+
+ALTER TABLE `item_link` CHANGE `domain_id` `system_id` INT(10) UNSIGNED NOT NULL ;
+
+INSERT INTO `xaracom_dev`.`system` (`installation_id`, `name`) VALUES ('1', 'default') ;
+
+RENAME TABLE `installation` TO `item_installation` 
+
+RENAME TABLE `system` TO `item_system` 
+
+update item_link set system_id = 1 ;
+
+update item_link set installation_id = 1;
+
+- added a tree model and updated the item model
+
+	everything now goes through the tree and item models - they look after loading and saving items
+	
+- creating the root area so you can add an installation and build a new system based on the installation
+config system_layouts
+
+- tree
+
+	add parent_link_id into the link table
+	
+	this means that an item really has no business in working out where it lives
+	
+	also - it means that items need to use their link_ids in order to refer to parent
+	child relationships
+	
+	the database will spit out items have have their link_ids mapped onto their id
+	
+	IN OTHER WORDS - an item id is ALWAYS actually the link_id that represents it
+	
+	the field mapping the system will do is as follows:
+	
+		loaded from the database:
+		
+			id (items id), link_id, parent_link_id
+			
+		presented to the client:
+		
+			id (link id), parent_id (parent_link_id)
+			
+	So - whenever the system gets given an item_id - it must translate this from the link table
+	in order to get the REAL item id
+	
+	likewise - when the system gets given a parent_id - it must translate in the same way
+	to get the parents actual item.id
+	
+	

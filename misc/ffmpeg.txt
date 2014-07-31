@@ -1,0 +1,47 @@
+http://www.ffmpeg.org/ffmpeg-doc.html
+
+http://www.longtailvideo.com/support/forums/addons/working-with-modules/8057/external-php-with-ffmpeg-using-readfile
+
+For extracting images from a video:
+
+ffmpeg -i foo.avi -r 1 -s WxH -f image2 foo-%03d.jpeg
+
+This will extract one video frame per second from the video and will output them in files named `foo-001.jpeg', `foo-002.jpeg', etc. Images will be rescaled to fit the new WxH values.
+
+If you want to extract just a limited number of frames, you can use the above command in combination with the -vframes or -t option, or in combination with -ss to start extracting from a certain point in time.
+
+ 
+
+ 
+
+ 
+
+Here's the code to get the width and height.
+
+<?php
+
+// get video width and height
+// Will - 10-14-07
+// for testing call with: ffmpeg_image.php?file=video.flv
+
+$videofile = (isset($_GET['file'])) ? strval($_GET['file']) : 'video.flv';
+
+ob_start();
+passthru("ffmpeg-10141.exe -i \"". $videofile . "\" 2>&1");
+$size = ob_get_contents();
+ob_end_clean();
+
+preg_match('/(\d{2,4})x(\d{2,4})/', $size, $matches);
+$width = $matches[1];
+$height = $matches[2];
+
+print "  Size: " . $size   . "<br />\n";
+print " Width: " . $width  . "<br />\n";
+print "Height: " . $height . "<br />\n";
+
+?>
+
+
+You only need the code from ob_start(); to $height = $matches[2]; The rest is just for testing. Assign your filename to $videofile.
+
+You should get output that looks like this:

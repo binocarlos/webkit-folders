@@ -1,0 +1,215 @@
+Installation of webkitfolders
+
+check PHP version 5.3
+
+CENT:
+
+rpm --import http://repo.webtatic.com/yum/RPM-GPG-KEY-webtatic-andy
+cd /etc/yum.repos.d/
+wget http://repo.webtatic.com/yum/webtatic.repo
+yum --enablerepo=webtatic update php
+yum --enablerepo=webtatic install php-devel
+
+
+
+
+
+
+install PEAR modules:
+	json
+
+1. Install Kohana
+-----------------
+
+Grab a copy of Kohana (http://www.kohanaphp.com) - remove anything but the system folder
+as the svn checkout will define the modules and the website
+will define the application
+
+The application is a skeleton config - all the action happens in the modules
+
+Normally Kohana gets installed into /usr/local/kohana/system
+
+You can put it whereever you want though
+
+
+
+2. Checkout WebkitFolders from SVN
+---------------------------------------------
+
+Checkout the codebase from SVN and put it somewhere like:
+
+/usr/local/webkitfolders
+
+or
+
+/home/webkit/sites/webkitfolders
+
+
+3. Create the Admin Website
+---------------------------
+
+3.1 path_to_admin_site/www/kohana.php
+-------------------------------------
+You need to create the kohana.php in the root of the site that you 
+want to use for the admin website.
+
+The important parts of this are:
+
+	$kohana_application -> points to the skeleton config of the admin site (see below)
+	
+		../application
+	
+	$kohana_modules -> points to the modules folder of the svn checkout
+	
+		/usr/local/webkitfolders/modules
+	
+	$kohana_system -> points to where the kohana system is installed (as above)
+	
+		/usr/local/kohana/system
+	
+3.2 path_to_admin_site/application/config
+-----------------------------------------
+This is the skeleton application that only really gives you a chance to configure
+the webkit folders admin app - it does not define any code hence there only
+being a config folder
+
+	--------------------------------------------
+	
+	config/config.php
+		This is the admin site Kohana config file
+		
+		Trigger URL (/app) - this MUST line up with the apache rewrite that you apply below
+		
+		In other words /app/* is what will get rewritten to kohana.php?$1
+		
+		Therefore - tell Kohana that /app is the base URL
+		
+		The important thing here is that it includes the folders modules like so:
+		
+		$config['modules'] = array
+		(
+			MODPATH.'webkitfoldersadmin',
+			MODPATH.'webkitfolders'
+		);
+		
+	--------------------------------------------
+	
+	config/webkitfolders.php
+		The admin site webkit folders config - this lets you configure the various
+		aspects of the admin site install - as the modules that are inSVN will be 
+		overwritten if you do an update - if you need to override the defaults,
+		configure them here - everything you can configure here is configured
+		from within the modules config:
+		
+		icon_folder - where is the icons folder (i.e. the source icons) on the local
+		system
+		
+			/usr/local/webkitfoldersicons
+			
+		icon_cache_folder - where is the folder that will be used to cache the icons
+		on the local system
+		
+			/usr/local/webkitfolderscache/icons
+		
+		upload_folder - where is the folder that will be used to hold uploaded files
+		on the local system
+		
+			/uploaded_files
+			
+		NOTE - uploaded files should be SYMLINKED from inside the site and will probably
+		actually live here (see below for more about the symlinking):
+		
+			/usr/local/uploaded_files
+			
+		The icons don't need to be symlinked because they are all served from a controller
+		TODO - uploaded files should be served from a controller so permissions can be applied
+		and the files are not publically accessible
+		
+	--------------------------------------------
+	
+	config/database.php
+		Kohana Database config for the admin site - this needs to be defined here because inevitably
+		the DB details will be different when you put the site on a different server
+		
+	
+3.3 httpd Rewrite Rule
+-----------------------------------------	
+You must create a rewrite rule for the httpd serving the admin site so that anything inside of /app 
+(or your choosen path) will be rewritten to kohana.php
+
+3.4 Symlink Ext application
+---------------------------
+next you need to symlink to the EXT application that lives in amoungst the SVN
+it is up to you what folder you want the ext application to run in but this should be configured
+in the config for the admin app (admin_application_folder)
+
+ln -s /usr/local/webkitfolders/admin/extapplication adminApp
+
+3.5 Install EXT
+-----------------
+
+Download and install EXT (http://www.extjs.com) into the admin website - install it into /ext
+
+3.5 Install IUI
+-----------------
+
+Download and install IUI (http://code.google.com/p/iui/downloads/list) into the admin website - install it into /iui
+
+
+4. Create folders
+-----------------
+Create folders for the ICONS and CACHE and UPLOADS
+
+Icons - the folder that contains all of the icons must be moved somewhere and then configured in webkitfolders.php
+
+Cache - the folder that will be used for the file cache - configured in webkitfolders.php
+Note - you don't need to create a icons subfolder - it will do this automatically
+
+Uploads - the folder used to upload files into - again configure in webkitfolders.php
+
+5. Install ImageMagick
+----------------------
+
+RPM World
+yum install libjpeg-devel libpng-devel glib2-devel fontconfig-devel zlib-devel libwmf-devel freetype-devel libtiff-devel
+
+APT-GET World
+
+apt-get install libjpeg62-dev
+apt-get install libbz2-dev
+apt-get install libtiff4-dev
+apt-get install libwmf-dev
+apt-get install zlib1g-dev
+apt-get install liblcms1-dev
+apt-get install libexif-dev
+apt-get install libperl-dev
+
+
+then compile ImageMagick from source
+
+then go and grab imagick + magickwand module from PECL
+
+unzip it and cd into folder
+
+phpize
+./configure
+make
+
+now we have built the module - move it to the PHP modules folder
+
+cd modules
+/usr/lib/php/modules/ (or extension_dir in phpinfo())
+
+then add to PHP configuration (/etc/php.d/) or (/etc/php5/conf.d/)
+
+
+
+			
+		
+		
+
+
+
+
+
+

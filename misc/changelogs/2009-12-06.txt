@@ -1,0 +1,1 @@
+delete from item_keyword where name = 'url' or name = 'parent_url';

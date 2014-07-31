@@ -1,0 +1,18 @@
+﻿contact form (**)
+	email upon modification (**)
+	
+user comments
+	moderation (template checks 'moderation' field for yes)
+	
+sitemap + rss + xml feed (**)
+
+photo galleries
+	photo model (main pic + thumbnail)
+	menu (**)
+	
+product database
+	display picture + price
+	menu (**)
+
+blog (contains blog_comment)
+	public comment

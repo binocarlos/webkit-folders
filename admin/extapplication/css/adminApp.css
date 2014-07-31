@@ -1,0 +1,459 @@
+/*****************************************************************
+ * ***************************************************************
+ * ***************************************************************
+ * ***************************************************************
+ * ***************************************************************
+ * ***************************************************************
+ * 
+ * GENERIC STYLES
+ *
+ * ***************************************************************
+ * ***************************************************************
+ * ***************************************************************
+ * ***************************************************************
+ * ***************************************************************
+ * ***************************************************************
+ * 
+ */
+
+td {
+	font: 11px Arial, Helvetica, sans-serif;
+}
+
+/*****************************************************************
+ * ***************************************************************
+ * ***************************************************************
+ * ***************************************************************
+ * 
+ * Styles for the itemTree
+ *
+ * ***************************************************************
+ * ***************************************************************
+ * ***************************************************************
+ */
+
+.itemTreeFolder {
+	background-image: url('../images/folder_view/folder.png')!important;
+	background-repeat: no-repeat;
+}
+
+/*****************************************************************
+ * ***************************************************************
+ * ***************************************************************
+ * ***************************************************************
+ * 
+ * Styles for the itemView
+ *
+ * ***************************************************************
+ * ***************************************************************
+ * ***************************************************************
+ */
+ 
+ 
+  /*****************************************************************
+ * 
+ * group
+ *
+ * ***************************************************************
+ */
+
+.group-header-block {
+	width:320px;
+	margin-top: 10px;
+	clear: left;
+	cursor: default;
+	-moz-user-select: none;
+    -khtml-user-select:none;
+    -webkit-user-select:ignore;
+}
+
+.group-items-block {
+	cursor: default;
+}
+
+.group-header-item-title {
+	font-weight: bold;
+}
+
+.group-header-group-title {
+	
+}
+
+.group-header-divider {
+	background: #ffffff url(../images/folder_view/item_view_group_divider.gif) no-repeat left top;
+	width: 320px;
+	height: 1px;
+	clear: left;
+	display: block;
+}
+
+.group-header-toggle {
+	cursor: pointer;
+}
+
+ /*****************************************************************
+ * 
+ * icons
+ *
+ * ***************************************************************
+ */
+
+
+.icons-item {
+	float: left;
+	margin-left: 10px;
+	margin-right: 10px;
+	margin-top: 8px;
+	padding: 5px;
+	-moz-user-select: none;
+    -khtml-user-select:none;
+    -webkit-user-select:ignore;
+}
+
+.icons-thumbnail {
+	padding:0px;
+	width: 90px;
+	height: 60px;
+	display: block;
+	overflow: hidden;
+	text-align: center;
+}
+
+.icons-title {
+	font: 11px Arial, Helvetica, sans-serif;
+	width: 90px;
+	height: 30px;
+	display: block;
+	overflow: hidden;
+	text-align: center;	
+	cursor: default;
+}
+
+
+/*****************************************************************
+ * 
+ * icon-choice
+ *
+ * ***************************************************************
+ */
+
+
+.icon-choice-item {
+	float: left;
+	margin-left: 4px;
+	margin-right: 4px;
+	margin-top: 0px;
+	padding: 5px;
+	-moz-user-select: none;
+    -khtml-user-select:none;
+    -webkit-user-select:ignore;
+    cursor:pointer;
+}
+
+.icon-choice-thumbnail {
+	padding:0px;
+	width: 48px;
+	height: 48px;
+	display: block;
+	overflow: hidden;
+	text-align: center;
+}
+
+.icon-choice-title {
+	font: 9px Arial, Helvetica, sans-serif;
+	width: 48px;
+	height: 40px;
+	margin-top:3px;
+	display: block;
+	overflow: hidden;
+	text-align: center;	
+	cursor: default;
+}
+
+
+
+ /*****************************************************************
+ * 
+ * details
+ *
+ * ***************************************************************
+ */
+ 
+
+.details-item {
+	font: 11px Arial, Helvetica, sans-serif;
+	width: 98%;
+	height: 20px;
+	padding: 5px;
+	margin-top: 1px;
+	cursor: default;
+	-moz-user-select: none;
+    -khtml-user-select:none;
+    -webkit-user-select:ignore;
+}
+
+.details-image {
+	vertical-align:text-top;
+}
+
+ /*****************************************************************
+ * 
+ * selections
+ *
+ * ***************************************************************
+ */
+
+.itemViewOver {
+    border:1px solid #9999cc;
+    background: #efefef url(../../ext/resources/images/default/grid/row-over.gif) repeat-x left top;
+	padding: 4px;
+}
+
+.itemViewSelected {
+	background: #eff5fb url(../images/folder_view/selected.gif) repeat-x left top;
+	border:1px solid #9999cc;
+	/*99bbe8*/
+	padding: 4px;
+}
+
+
+
+/*****************************************************************
+ * ***************************************************************
+ * ***************************************************************
+ * ***************************************************************
+ * ***************************************************************
+ * ***************************************************************
+ * 
+ * Overridden EXT Styles
+ *
+ * ***************************************************************
+ * ***************************************************************
+ * ***************************************************************
+ * ***************************************************************
+ * ***************************************************************
+ * ***************************************************************
+ * 
+ */
+ 
+  /*****************************************************************
+ * 
+ * Disabled more transparent
+ *
+ * ***************************************************************
+ */
+  
+ .x-item-disabled {
+    cursor: default;
+    opacity: .2;
+    -moz-opacity: .2;
+    filter: alpha(opacity=20);
+}
+ 
+  /*****************************************************************
+ * 
+ * Toolbar Menu
+ *
+ * ***************************************************************
+ */
+
+.x-menu-item-active {
+    border-width: 1px 0;
+}
+
+.x-menu-item-active a.x-menu-item {
+    border-width: 0 1px;
+}
+
+//.x-btn-mc em.x-btn-arrow {
+//    background-image:url(../images/folder_view/button/arrow.gif);
+//}
+
+.x-btn-click .x-btn-text, .x-btn-menu-active .x-btn-text, .x-btn-pressed .x-btn-text{
+    color:#fff;
+}
+
+  /*****************************************************************
+ * 
+ * Clipboard
+ *
+ * ***************************************************************
+ */
+ 
+#clipboardTitle {
+	font-weight: normal;
+}
+
+#clipboardTitle {
+	color:#ccccff;	
+}
+
+#clipboard-remove-span {
+	cursor: pointer;
+	color:#ffffff;	
+}
+
+
+  /*****************************************************************
+ * 
+ * Icon Choice
+ *
+ * ***************************************************************
+ */
+
+.icon-choice-field {
+	padding-top: 10px;	
+	padding-bottom: 10px;	
+}
+
+.icon-choice-field-panel {
+	padding-top:3px;
+}
+
+.icon-choice-field-blank-span {
+	color:#888888;	
+}
+
+.icon-choice-panel-body{
+	background: #ffffff;
+	font: 11px Arial, Helvetica, sans-serif;
+}
+
+.icon-choice-thumb {
+	background: #ffffff;
+	padding: 3px;
+}
+
+.icon-choice-thumb img{
+	height: 48px;
+	width: 48px;
+}
+
+.icon-choice-thumb-wrap {
+	float: left;
+	margin: 4px;
+	margin-right: 0;
+	padding: 5px;
+}
+
+.icon-choice-title {
+	display: block;
+	width:48px;
+	overflow: hidden;
+	text-align: center;
+}
+
+
+  /*****************************************************************
+ * 
+ * File upload
+ *
+ * ***************************************************************
+ */
+
+.error-label { 
+	margin-top: 10px;
+	border: 0;
+	color:#660000;
+}
+
+.file-field {
+	padding-top: 10px;	
+	padding-bottom: 10px;	
+}
+
+.file-field-panel {
+	padding-top:3px;
+}
+
+.file-field-blank-span {
+	color:#888888;	
+}
+
+.file-field-filename {
+	color:#000099;
+}
+
+.file-field-delete-link {
+	cursor:pointer;
+	color:#000099;
+}
+
+.file-field-launch-link {
+	cursor:pointer;
+	color:#000099;
+}
+
+.x-form-file-wrap {
+    position: relative;
+    height: 22px;
+}
+.x-form-file-wrap .x-form-file {
+	position: absolute;
+	right: 0;
+	-moz-opacity: 0;
+	filter:alpha(opacity: 0);
+	opacity: 0;
+	z-index: 2;
+    height: 22px;
+}
+.x-form-file-wrap .x-form-file-btn {
+	position: absolute;
+	right: 0;
+	z-index: 1;
+}
+.x-form-file-wrap .x-form-file-text {
+    position: absolute;
+    left: 0;
+    z-index: 3;
+    color: #777;
+}
+
+.upload-icon {
+	background: url('../images/image_add.png') no-repeat 0 0 !important;
+}
+
+
+.clipboard-info {
+	padding-right:20px;
+	cursor:default;
+}
+
+
+.msg {
+	padding:3px;
+    font-size:9pt;
+   background-color:#ffffff;
+    border:1px solid #000000;
+}
+#msg-div {
+    position:absolute;
+    top:10px;
+    width:250px;
+    z-index:20000;
+     
+}
+
+.x-menu em:hover, .x-menu span:hover {   
+    background-color: #deecfd;
+}
+
+.x-btn-text  {
+	color:#ff0000;
+}
+
+.mce_mouse_over {
+	background-color:#ffcccc;
+}
+
+.mce_preview {
+	padding:10px;	
+	cursor:pointer;
+	height:90%;
+}
+
+.mcePreviewOverflow {
+	overflow-y:auto;
+	border: 1px solid #cccccc;
+	height:100%;
+}

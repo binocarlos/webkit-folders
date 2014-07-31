@@ -1,0 +1,508 @@
+Features & Thoughts
+
+	- Tree
+	
+		The tree structure in the database has been represented as a:
+		
+		Preorder Tree Traversal
+		
+		The tree is represented by item_link
+		
+		each item_link represents the presence of an item inside another item
+		
+		so - in this way - we should treat item_links as the pointers to items -
+		not the item ids themselves
+		
+		because the item_link table is one-to-many with item - an item can live
+		in several places at the same time
+		
+		if you load a tree that contains the same item in 2 places - you will have 
+		a duplicate id
+		
+		this is why you have to treat the item_link as the primary key for an item
+		
+		the database system - when it presents the data to the front end - does a little trick however
+		
+		an item will have the following fields after the tree_load
+		
+			-> id 			(52)
+			-> link_id 		(345)
+			-> parent_id	(23)
+			
+		the model will transform this into
+		
+			-> id:link_id	(52:345)
+			-> link_id		(345)
+			-> item_id		(23)
+			
+		this means that for the front-end - it can treat each item as unique as in the context
+		of its link
+		
+		
+	- Copy and paste
+	
+		When you Copy and Paste an item - you do not get a new copy of the item that is different
+		to the old one.
+		
+		Instead, you get a pointer to the same item in 2 different places.
+		
+		So, if you copy your /work/documents folder - and paste it into /work2/stuff
+		
+		you would have 2 folders that are actually the same folder but with 2 different names
+		
+		this means if you added something into it - like a photo - it would appear in both places
+		
+		/work/documents/photo1 is now the same as /work/documents/photo2
+		
+		Each time you copy and paste the same item - it links itself to the same item
+		
+		If you edit anything beneath this item - the copied children everywhere else will get updated
+		(because they are the SAME item)
+		
+	- create tree
+		tree table (new system for installation)
+		item_link needs tree_id so an installation can have several systems
+		
+		each system is a completely seperate tree from the other - a query can only be run
+		on one system
+		
+		however - you can copy items from one system to another and they remain the same
+		items
+		
+		therefore - different systems can represent totally different trees for the same data
+		
+		you can then specify which system to look in inside your query
+		
+	- tree internals
+	
+		basic rule for tree manipulation:
+		
+			if you do something with a link and links with the same id, parent_id
+			exists - you have to do the same thing to all of the links
+		
+			////////////////////////////////////////////////////////////////
+			// adding one item to another where the item is a newly created one
+			- add_item(parent_link_id)
+			
+				// create the item to get its id
+				insert new_item
+				
+				load parent_link where id = parent_link_id
+				
+				// load all links for the parent item
+				load parent_links where link.item_id = parent_link.item_id
+				
+				// loop each parent link
+				foreach(parent_links as parent_link)
+				{
+					// make space ready to add a new link to the parent link
+					link += 2
+					
+					// insert the new link for the item
+					insert link link.item_id = new_item.id, link.parent_id = parent_link.id
+				}
+			
+			////////////////////////////////////////////////////////////////
+			// removes all children of this item
+			- empty_item(item_link_id, norecycle)
+			
+				load item_link where id = item_link_id
+				
+				load item_links where parent_id = item_link.item_id
+				
+				load bin_link
+				
+				// loop through each of the links that are to be removed
+				foreach(item_links as delete_link)
+				{
+					
+				}
+				
+				
+				
+			////////////////////////////////////////////////////////////////
+			// removes items from another - optionally remove them from everywhere else also
+			- remove_items (item_link_ids, bin, norecycle)
+			
+				// load the array of item_links that are to be removed
+				load item_links where id in(item_link_ids)
+				
+				// load the bin link in case we need to recycle items
+				load bin_link
+				
+				// loop through each of the links that are to be removed
+				foreach(item_links as delete_link)
+				{
+					// get a list of any copies for the link to be removed (which will include the link itself)
+					load item_links2 where link.item_id = delete_link.item_id
+					
+					// if mode is 'delete' then it means every link for this item regardless of where it is
+					// otherwise - we only want links that are to the same parent
+					if(!alllinks)
+					{
+					 	and link.parent_id = delete_link.parent_id
+					}
+					
+					// loop each of the delete_link copies
+					foreach (item_links2 as delete_link_copy)
+					{
+						if(delete_link_copy.id!=delete_link.id)
+						{	
+							// make space for the deleted link
+							update link set right,left -= 2 where right > delete_link_copy.right
+						
+							// remove the link
+							delete link where left >= delete_link_copy.left and right <= delete_link_copy.right
+						}
+					}
+					
+					// get a count of how many links are left for the item since we removed some
+					load count item_links where item_id = delete_link.item_id
+					
+					// the only link left is the one we want to delete (which we havn't removed yet)
+					// so - lets recycle it!
+					if(count<=1)
+					{
+						if(
+						bin_link += 2;
+						
+						insert link link.item_id = delete_link.item_id, link.parent_id = bin_link.item_id
+					}
+				}
+			
+				
+			- 
+				
+				
+				
+				
+	- Installations
+	
+		Extra table to record completely seperate installations with no cross-over
+		
+		installation_id goes throughout the system
+		
+		Installations can then be configured to allow for different behaviour / looks & feels
+		
+	- Paths
+	
+		Make the link of child & parent into many to many so items can exist in several folders
+		
+		This makes copy & paste easy
+		
+		Items need comprehensive info about their paths in order to create all the SQL malarky below
+		
+	- Security
+	
+		Make sure that FTP accounts are locked down and PHP is bomb-proof with no database access
+		
+		Make sure any item that is coming out of the database belongs to the installation
+		
+		Make sure if an id is used anywhere that the id belongs to the installation
+		
+		Make sure CSS attacks and overloaded queries are caught
+		
+		Query_Model needs to be paranoid about the query statement with DEFCON error checking
+		
+	- Folders, Models, Users & Bin
+	
+		Make the top level folder be 'system' and underneath have:
+		
+			X:/ 	- top level folder (/)
+			
+			Models	- the collection of item definitions in a tree
+			
+			Users	- the user tree
+			
+			Bin		- the bin tree
+			
+	- Schema Loader
+	
+		The schema should be loading the tree from XML files stored in items in the Models tree
+		
+	- Schema Builder
+	
+		Interface for creating a new Model using the form as the gui
+		
+	- Access Query
+	
+		Items can have queries applied to them that dictate what users are allowed to access certain things
+		
+		The query is applied to the users tree and so allows for flexible definitions of who can do what
+		
+			load users from /humanresources
+			
+		Which means as new users get added - they are still applicable without having to specifically add them
+		
+	- Access Calculations
+	
+		Get the Query_Model to examine the access queries on items to determine the most efficient way of determining access
+
+	- Item Storage Drivers
+	
+		item storage drivers is like a boundary point - past which someone else takes over
+		and gives you information you cannot see
+		
+		It means that items created by the storage drivers are entirely up to its internal mechanism
+		
+		items need to have agnostic storage control so they could save themselves outside of the
+		database but still represent themselves inside of the system
+		
+		items could then simply be representations of external data
+		
+		to do this - the id mechanism needs looking at - i.e. we can't assume every item will have
+		a primary key id to our database - it might have a totally different id based on the items
+		storage driver
+		
+		so - if we can assign anything as an id - a database item that represents an FTP folder
+		could have an id of something id 45455:/www/images/myfolder - this would represent a specific directory
+		inside of an FTP folder - we could call these things ghost items -
+		they don't really exist but were the result of external data or data manipulation
+		
+		this means an email account could be represented using a POP3/IMAP client has a data source
+		
+		or complex objects can be created on the fly using facebook/stockquotes/whatever and then provided as (readonly) items
+		
+		when you create an item Model you can tell it what storage driver to use - the default is database
+		
+		normal users cannot create Models in this way (i.e. these things need programming!)
+	
+		
+	- Field Storage Drivers
+		
+		How does the data for one field type get saved into the database
+		
+		Field Storage is another point but similar - if an items storage driver is specific then the storage
+		of its fields and children is up to the driver and the internals are left alone
+		
+		However - if the item uses the default database mechanism but one of its fields uses a different driver
+		- then this driver is used to store the fields data
+		
+		This means that rather than save some field data to the database it could email it somewhere
+		or save it to a file or log
+		
+		Think of field Storage drivers as triggers - when ever that field is saved - the driver can leap in and do something
+		
+		There is a Default field driver which all field drivers will extend - this saves the field data to the 'value' field of the keyword table
+		
+		If a field driver wants to do anything slightly differently - it should override the save method and define what it wants to do
+		
+		The driver could choose to email the value or upload it to facebook before delegating the action back up so it still gets saved
+		in the database
+		
+		Currently JSON + Image + Date fields need this functionality
+		
+		Field Storage Drivers need to be chained so that one can operate after another (e.g. email this here then save it to facebook)
+		
+	- Item Fields
+	
+		Fields in one item that point directly at another item somewhere else
+		
+		This is useful if you want to assign one item to another in some way
+		
+		Like - this template from over there is what should be used for this page
+		
+		They shouldn't auto-populate for queries however and so should be treated with care...
+	
+		TO COME!	
+		
+	- Multiple Fields
+	
+		Fields that dictate a collection of values - therefore have multiple keywords for each field name
+		
+		Using the idea of combined fields below - order can be acheived by using an index as the sub-field name
+		
+			for example - a field definition is a list of dates
+			
+				<field name="fieldtrips" type="date" multiple>
+				
+			if there were 3 dates added to this field - the data base would contain
+			
+			fieldtrips.0 = 10/10/2009
+			fieldtrips.1 = 12/10/2009
+			fieldtrips.2 = 14/10/2009
+			
+		When the data is loaded - it is ordered using the index
+		
+		Any field type can be used in multiple configuration 
+		each entry has its own keyword row like normal - the name of the field is what makes it work
+		
+		Multiple Fields would use the List Field Storage Driver
+		
+	- Combined Fields
+	
+		Combined Fields is a much better alternative to the JSON storage mechanism
+		
+		for example - an image field called photo1 has a size and type
+		
+		we need two keywords named: photo1.size and photo1.type
+		
+		In this way we have one level deeper in our structure and we can say:
+		
+			product.photo1.size > 100
+			
+		At the moment - this info is flattened into JSON so the database can't see it
+		
+		Also - this means you can nest keywords as deep as you like - they will all return
+		for the item and be built up after insertion
+		
+		Combined Fields would use the Object Field Storage Driver
+		
+		JSON still has a role - if a field is a large collection of deep but static data
+		(e.g. a layout config)
+		
+	- Deep nested fields
+	
+		Using the above two - you can create some complicated data structures just for one item
+		
+			item.highscores.0.photo.size
+			
+		means - get the size of the first photo in the highscores list
+		
+		It is all done on the field name - so the above keyword would have the following name:
+		
+			'highscores.0.photo.size' and its size value
+		
+	- FTPFolder
+	
+		Item type that is configured with FTP details of a website and then lists the contents
+		of the FTP folder - will know if the site is locally hosted from the installation info
+		
+		The user can then browse & modify their FTP account from within the app - the FTP folder
+		is configure to connect to the FTP account to make the changes - therefore has write access
+		regardless of location
+		
+		This means that the system is allowed to open, process and then write back pages in the
+		users FTP account
+		
+		Editing of actual pages becomes possible as well as a tool to insert query results:
+
+		
+	- WISIWIG Query Insertion
+	
+		Developer uploads their HTML file to their FTP account
+		
+		They open the FTP Folder for that website inside their system
+		
+		They browse to the HTML page they want to add stuff to or use as a template
+		
+		It opens in a WISIWIG preview window - split pane with source code view
+		
+		They click where they want to add some data either in the source code or the GUI
+		and it highlights that area as where stuff will go
+		
+		They use the Query Wizard to build a query tag
+		
+		It inserts the query tag into the HTML that is highlighted
+		
+		The source view shows the tags used to construct the query
+		
+		The preview actually executes the query and renders the results
+		
+		As they edit the source code above - the preview changes below
+		
+		
+		The Query Wizard can contain a stage that builds templates for the results
+		Otherwise the default auto-built templates are constructed
+		
+		It then does a best effort at using these templates to try and render the results
+		The idea is that this is a useful starting place for the HTML person to mess with it some more
+		
+		When they are done they click save - it tells them to download the HTML with the tags in because
+		the system has changed the file.
+		
+		They can then manually edit and re-upload the file as needed...
+		
+		If the WISIWIG is opened on a page that already contains tags - they show up and can be edited too	
+		
+----------------------------------------------------------------------		
+		
+Issues
+
+-	Installation
+
+	needs configuring against what domains are allowed to access it
+	
+	this is part of the installation filter in the Generic_Model
+
+-	Security for developers using PHP
+
+	because a php developer might be able to get direct access to the database
+	or generally screw things up much easier than an outside user - a php developed
+	site MUST be hosted independently of other customers
+	
+	You can technically run as many sites as you want - all in PHP all on the server
+	
+	You can't stop one PHP guy accessing data from another customer however
+	
+	So - providing everyone on the same server trusts each other - no problem
+	
+	If a server contains only FTP and no PHP accounts - you can mingle lots of different people
+	(classic shared server approach without CGI)
+	
+	
+
+-	The Query_Model needs to perform a lot more in the database than in memory
+	at the moment the query parser's where statement is being processed in memory
+	
+	the Query_Model should translate the provided query into a multiple join using
+	however many rows from keyword that exists different fields in the query
+	
+	for example:
+	
+		select product,offer
+		from /products/tvs
+		where
+		(
+			product.price < 100
+			and
+			product.price > 10
+		)
+		and
+		(
+			year(product.date) = 2009
+		)
+		
+	would result in:
+	
+		select item.* from item
+		left join item_keyword k1 on k1.item_id = item.id
+		left join item_keyword k2 on k2.item_id = item.id
+		where
+		// this first part of the where query is all about 'what' from 'where' i.e. the select and from parts of the query
+		(
+			(
+				item.path contains '/products/tvs'
+			)
+			and
+			(
+				item.item_type = 'product'
+				or
+				item.item_type = 'offer'
+			)
+		)
+		// this second part of the where query is the clause based on the multiple keyword values
+		and
+		(
+			(
+				// this represents the product.price < 100
+				(
+					(item.item_type != 'product')
+					or
+					(k1.name = 'price' and k1.number_value < 100)
+				)
+				// this represents the product.price > 10
+				and
+				(
+					(item.item_type != 'product')
+					or
+					(k1.name = 'price' and k1.number_value > 10)
+				)
+			)
+			and
+			(
+				(item.item_type != 'product')
+				or
+				(k1.name = 'date' and year(k1.date_value) = 2009)
+			)
+		)		

@@ -1,0 +1,108 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Admin</title>
+	
+	<!-- test -->
+	
+	<!-- 
+	<link rel="stylesheet" type="text/css" href="../app/admin/get_icon_css" />
+	-->
+	
+	<!-- REPLACE /ext with the URI to your ext installation - relative or absolute is fine -->
+	<link rel="stylesheet" type="text/css" href="../ext/resources/css/ext-all.css" />
+	
+	<link rel="stylesheet" type="text/css" href="css/App.css" />
+	<link rel="stylesheet" type="text/css" href="css/adminApp.css" />
+	
+</head>
+<body scroll="no" id="bodyElem">
+	<div id="message-div" style="width:300px;"></div>
+	<div id="loading-mask" style=""></div>
+	<div id="loading">
+		
+		<!-- REPLACE /img/xaralogo.png with the URI of a logo you want to display when loading the adminApp -->
+		<div class="loading-indicator"><img src="/xaralogo.png" width="126" height="47" style="" align="absmiddle"/></div>
+		
+	</div>
+
+
+	
+	<!-- DEV INCLUDES -->
+	<!-- REPLACE /ext with the URI to your ext installation - relative or absolute is fine -->
+	
+	<!--
+ 	<script type="text/javascript" src="../ext/adapter/ext/ext-base-debug.js"></script>
+	<script type="text/javascript" src="../ext/ext-all-debug.js"></script>
+	-->
+		
+		
+		
+
+	<!-- PRODUCTION INCLUDES -->
+	<!-- REPLACE /ext with the URI to your ext installation - relative or absolute is fine -->
+
+	
+ 	<script type="text/javascript" src="../ext/adapter/ext/ext-base.js"></script>
+	<script type="text/javascript" src="../ext/ext-all.js"></script>
+	
+
+
+    	<!-- APP INCLUDES -->
+	<script type="text/javascript" src="libraries/App.js"></script>
+	<script type="text/javascript" src="libraries/Extras.js"></script>
+	
+	<script type="text/javascript" src="app/adminApp.js"></script>
+	
+	<script type="text/javascript" src="app/itemLoader.js"></script>
+	<script type="text/javascript" src="app/itemTree.js"></script>
+	
+	<script type="text/javascript" src="app/itemForm.js"></script>
+	
+	<script type="text/javascript" src="app/itemView.js"></script>
+	<script type="text/javascript" src="app/itemViewTabPanel.js"></script>
+	<script type="text/javascript" src="app/itemViewStore.js"></script>
+	<script type="text/javascript" src="app/itemViewDataView.js"></script>
+	
+	<script type="text/javascript" src="app/item.js"></script>
+	<script type="text/javascript" src="app/schema.js"></script>
+	<script type="text/javascript" src="app/itemFields.js"></script>
+	<script type="text/javascript" src="app/fileUploadField.js"></script>
+	
+	<script type="text/javascript" src="app/language.js"></script>
+	
+	<script type="text/javascript" src="app/iconFactory.js"></script>
+
+	<script>
+		////////////////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////////////////
+		// This is the creation of the folders admin app - you must change the webApplicationURI property to reflect
+		// where you have told apache the admin web app lives (i.e. look at the redirect rule inside the virtual host)
+		
+		var theApplication = new Webkit.Folders.AdminApp({
+			webapplicationURI:'/app',
+			renderConfig:{
+				tree:{
+					div:'applicationTree'
+				},
+				toolbar:{
+					div:'applicationToolbar'
+				},
+				view:{
+					div:'applicationView'
+				}
+			}
+		});
+			
+	</script>
+	
+	<div id="applicationToolbar" style="width:1000px;height:100px;position:absolute;top:10px;left:10px;"></div>
+	
+	<div id="applicationTree" style="width:200px;height:400px;position:absolute;top:110px;left:10px;"></div>
+	
+	<div id="applicationView" style="width:1000px;height:1000px;position:absolute;top:110px;left:300px;"></div>
+
+	<div id="tooltip-div"></div>
+</body>
+</html>
+ 

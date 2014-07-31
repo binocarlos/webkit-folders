@@ -1,0 +1,2 @@
+﻿ALTER TABLE `item_keyword` ADD `id_value` INT UNSIGNED NULL AFTER `value` ;
+ALTER TABLE `item_keyword` DROP INDEX `value`, ADD INDEX `value` (`value`, `number_value`, `date_value`, `id_value`) ;

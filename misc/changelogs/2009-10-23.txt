@@ -1,0 +1,66 @@
+changelog - 24-10-2009
+
+- installation sql:
+
+CREATE TABLE `xaracom_dev`.`installation` (`id` INT UNSIGNED NOT NULL AUTO_INCREMENT, `name` VARCHAR (255) NOT NULL, `config` TEXT, PRIMARY KEY(`id`), INDEX(`id`,`name`)) TYPE = MyISAM /*!40100 DEFAULT CHARSET utf8 COLLATE utf8_general_ci */ ;
+
+INSERT INTO `xaracom_dev`.`installation` (`name`) VALUES ('xara') ;
+ALTER TABLE `item` ADD `installation_id` INT UNSIGNED NOT NULL AFTER `id` ;
+ALTER TABLE `item` DROP INDEX `id`, ADD INDEX `id` (`id`, `item_type`, `item_id`, `installation_id`) ;
+ALTER TABLE `item_keyword` ADD `installation_id` INT UNSIGNED NOT NULL AFTER `id` ;
+ALTER TABLE `item_keyword` ADD INDEX `id` (`id`, `installation_id`, `item_id`) ;
+ALTER TABLE `item_keyword` DROP INDEX `value_type`, DROP INDEX `number_value` ;
+ALTER TABLE `item_keyword` DROP INDEX `name`, DROP INDEX `value`, DROP INDEX `keyword_type`, DROP INDEX `item_id`, DROP INDEX `date_value` ;
+ALTER TABLE `item_keyword` ADD INDEX `value` (`value`, `number_value`, `date_value`) ;
+ALTER TABLE `item_keyword` DROP INDEX `id`, ADD INDEX `id` (`id`, `installation_id`, `item_id`, `name`) ;
+
+update item
+set installation_id = 1;
+
+update item_keyword
+set installation_id = 1;
+
+
+CREATE TABLE `xaracom_dev`.`item_link` (`id` INT UNSIGNED NOT NULL AUTO_INCREMENT, `installation_id` INT UNSIGNED NOT NULL, `item_id` INT UNSIGNED NOT NULL, `parent_id` INT UNSIGNED NOT NULL, `l` INT UNSIGNED NOT NULL, `r` INT UNSIGNED NOT NULL, PRIMARY KEY(`id`), INDEX(`id`,`item_id`,`parent_id`,`l`,`r`)) TYPE = MyISAM /*!40100 DEFAULT CHARSET utf8 COLLATE utf8_general_ci */ ;
+ALTER TABLE `item_link` CHANGE `parent_id` `parent_id` INT(10) UNSIGNED NULL  ;
+ALTER TABLE `item_link` ADD `parent_link_id` INT UNSIGNED NULL AFTER `parent_id` ;
+ALTER TABLE `item_link` CHANGE `parent_id` `parent_item_id` INT(10) UNSIGNED DEFAULT NULL NULL;
+
+
+-> change item_ids in item table so you have (CHANGED - added /root scripts to do this)
+
+	System
+		Disk Drive
+			Top Level Items
+			
+-> run /root/fix_tree
+
+ALTER TABLE `item` DROP `item_id` ;
+
+
+- added an installation config to the front-end kohana application folder
+the Generic_Model (i.e. anything that will want data) then ensures that the installation_id is set
+
+It can also check the domain to ensure the installation_id is set correctly
+
+integrated installation_id into the application
+
+also - when an item is loaded - it will check that its installation id is the same as the
+configured one - if not it will throw an exception to stop cross site scripting
+
+
+
+- changed the tree so it used a modified preordered tree traversal alogrithm
+
+changed this however so an it an can have several links to another but the tree is still represented as a whole
+
+read more about the tree structure in the features file.
+
+
+
+
+- moved the icons out of SVN (which was hard) - they now live: /usr/local/xaracom_admin/img/icons
+
+The icons folders is now configurable through the webkitfolders.php conf file
+
+Also the uploaded_files folder is configurable now in the same way

@@ -1,0 +1,4 @@
+changelog - 16-11-2009
+
+ALTER TABLE `item_link` ADD `link_type` VARCHAR(32) DEFAULT 'item' NOT NULL AFTER `parent_link_id` ;
+ALTER TABLE `item_link` DROP INDEX `id`, ADD INDEX `id` (`id`, `item_id`, `parent_item_id`, `l`, `r`, `installation_id`, `parent_link_id`, `system_id`, `link_type`) ;

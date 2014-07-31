@@ -1,0 +1,9 @@
+Things that need sorting:
+
+1. the drag selector only drags to the viewable area
+
+2. sort out the ghosting and stuff
+
+3. limit drag window to visible browser width
+
+4. SORT OUT GHOSTING!!!

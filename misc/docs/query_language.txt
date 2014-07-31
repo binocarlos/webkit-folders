@@ -1,0 +1,674 @@
+Query Language
+
+the start of a guide on how to extract items from your database using a Query
+
+syntax:
+
+---------------------------------------------------------------------------------------------------------------------
+
+load|select (list:[basedon|inherits]item_type[[fields]]|path|id|anything|*) [and|with contents|children]|[as|into tree]
+[from (path[/*]|id|anywhere) [and below]]
+[where|matching (clause)]
+[limit|maximum (limit)]
+[order|order by|sort|sort by (order)]
+
+---------------------------------------------------------------------------------------------------------------------
+
+1.	load|select
+
+load|select (list:[basedon|inherits]item_type|path|id|anything|*) [and|with contents|children]|[as|into tree]
+
+		the load statement dictates what types of item we want to fetch
+		
+		load 'WHAT' from 'location' where 'clause'
+		
+		- your models
+		-------------------------------------------------------------------					
+		you will have created some Models in your database so you know what types of items exist
+		for example a 'folder' called 'images' is an item that belongs to the 'folder' Model that has a name of 'images'
+					
+		using the load statement, you decide what types of item you want by using the names of your Model
+			
+		- using model names
+		-------------------------------------------------------------------					
+		so for example blog_entry is a Model you've created and perhaps you've added 20 different
+		entries into a folder called 'myblog'
+					
+			load anything from /myblog
+						
+		that would work - but what happens if someone puts a Photo or a Document into that folder
+					
+			load blog_entry from /myblog
+						
+		is much better - it means you are only looking for one particular 'type' of item from that folder (i.e. blog_entries)
+		
+		you can also use plurals to mean the same type of item
+		
+		this means that you can ask for products to mean product - however - blog_entries would not work
+		it only works by appending an 's' onto the end of the name
+		
+		you can also use the load statement to fetch one specific item - providing you knows its path or id
+		
+		---------------------------------------------------------------------------------------------------------------------
+		
+			-	load a single item - using a path or id 
+			
+					load /widgetguides/news				// load the item that has a specific URL
+					load 456							// load the item that has the given id
+					
+					the path or id is used as the identifier for the item you want to load
+					if you use this syntax everything except else will be ignored
+					 - i.e. you are loading a single item and optionally its children
+					 
+		---------------------------------------------------------------------------------------------------------------------
+					
+			-	load any type of item
+			
+					load anything						// loads any type of item based on the location and clause
+					load *								// same
+					
+					this leaves the selection process down to location and to the clause
+					i.e. you are not interested in the type of thing that is returned - indeed there may
+					by folders that contain all sorts of different things and you want to match them
+					using the clause or the location - not based on what they are
+					
+		---------------------------------------------------------------------------------------------------------------------
+			
+			-	load specific types of item
+			
+					load widget_guides					// load items that are widget_guides
+					load products,offers,categories		// load items that are any of products,offers or categories
+					load basedon(products)				// load items that are based upon products (i.e. inherit from in the schema)
+					load basedon(blog),photos			// load items that are based on blogs or are photos
+					
+					this means you are looking for specific types of item - i.e. items that belong to a specific Model
+					
+					this is most useful when you have a page that needs to display a specific type of information
+					(i.e. you choose just those specific things to display)
+					
+					you can ask for lots of different types of items - for example
+					
+						load blog_entry, calendar_update, photo_upload, todo_entry
+						from /work/schedule
+						
+					would load four different types of item from the given folder
+					
+		---------------------------------------------------------------------------------------------------------------------
+			
+			-	load only specific fields of an item
+			
+					load blog_entry[uploaded]			// loads blog_entries from a folder but only includes
+					from /blog_entries					// the uploaded field in the results
+					
+					load anything[size]
+					from anywhere						// loads any item but only with its size data, from any folder
+					
+					this allows you to specify that only the listed fields should be included for the items
+					
+					if you want to include a field for any type of item and another only if the item is of a particular type
+					you need to use a different syntax
+					
+					load anything[size],blog_entry,journal_entry
+					from anywhere
+					
+					this would result in an error - because you are asking for a mixture of anything and particular types
+					
+					what we want here is for only the size field to be returned but for two item types
+					
+					load blog_entry[size],journal_entry[size]
+					from anywhere
+					
+					would acheive this - but much better is:
+					
+					load (blog_entry, journal_entry)[size]
+					
+					it allows for you to specify some item types
+					and then follow those types with a list of fields that should be included for those types
+					
+					Note - you must enclose the list of item_types in brackets for this to work:
+					
+					load blog_entry, journal_entry[size]
+					
+					means something totally different (i.e. give me all fields of blog_entry but only size from journal_entry)
+					
+					you can list any fields that should be returned - if you name a field that a particular item type dosn't have 
+					- it will be ignore (and obviously the value will not be returned)
+					
+					so:
+						
+						load (review,rating,blog_entry)[title text created]
+						from /uploads
+						
+					would give you only 3 fields back for each item matched
+					
+					you can also used basedon amoungst this (see below):
+					
+					load basedon(product)[price rating]
+					
+					or
+					
+					load (journal_entry,basedon(blog_entry))[date_created text]
+					
+					in both cases - the basedon would expand to list all matching item types
+					but only the specified fields would be included for those items	
+				
+		---------------------------------------------------------------------------------------------------------------------
+					
+			-	load items that are based on another items Model
+			
+					load basedon(product)						// loads anything that has a Model based on 'product'
+					load inherits(product),product_category		// loads anything that has a Model based on 'product' or whos Model is 'product_category'
+					
+					if basedon or inherits are used - it means that the list of allowed items will automatically expand
+					to include anything that extends from a given type
+					
+					Models based on other Models (and inheritance)
+					-------------------------------------------------------------------
+					so for example - if I have a Model called 'gardenproduct' (based on the 'product' Model and adds a few fields)
+					and in turn I create 2 Models based on gardenproduct - 'lawnmower' and 'pond'
+					
+					You can see this in the following diagram:
+					
+																Product
+																   |
+														-------------------------
+														|						|
+													Garden Product		Kitchen Product
+														|					  .....
+											-------------------------
+											|						|
+										Lawnmower				   Pond
+										
+					
+					Loading specific things
+					-------------------------------------------------------------------
+					When I come to display things on my shop - I will want control over what types of item get put
+					where.  Saying something like:
+					
+						load lawnmower from /shop
+						
+					This would give us all of the lawnmowers in our shop folder
+					
+					However - what if our boss asks - can we please display a page with all the garden products on?
+					
+					So - we get cracking and come up with:
+					
+						load lawnmower, pond from /shop
+					
+					Your boss then asks if you can add sheds to the system so you make the Model and then:
+					
+						load lawnmower, pond, shed from /shop
+						
+					And so on...
+						
+					This will obiously get labourious over time as you have to keep track of adding new item types into
+					queries as people request new types of item that should just slot into your pages
+					
+					Loading related things
+					-------------------------------------------------------------------					
+					What would be much nicer is a general term for garden_products rather than list each type
+					
+						load basedon(garden_product) from /shop
+						
+					means that anything that is based on garden_product will be returned in the results
+					this includes lawnmowers, ponds and now sheds
+					
+					combine this with a clause and you have even more control
+					
+						load basedon(garden_product) from /shop where price < 100
+						
+					which gives you anything based on garden_product that also matches the clause
+						
+		---------------------------------------------------------------------------------------------------------------------		
+			
+			- loading structured results of items
+			
+					your folder structure
+					-------------------------------------------------------------------
+					you might have arranged your folders and items into a neat structure where data relates to each other nicely
+					
+					for example - a folder full of holiday snaps organized into folder for each trip:
+					
+					/holidayphotos
+						/france
+							photo1
+							photo2
+						/italy
+							photo3
+							photo4
+							photo5
+								
+					So - your page could easily display all of your photos using the following query:
+					
+						load photos from /holidayphotos/*
+						
+					(more about the asterix later - it means anywhere below here)
+						
+					This will give you 4 photos from inside holidayphotos - regardless of where exactly they live
+					
+					If we needed to know what folder the photos lived in - for example to create a menu from,
+					we will need a structured result i.e. a result that can tell us the relationship between items
+					
+					structured query results
+					-------------------------------------------------------------------
+					A structured result is a list of items that each have a children list of items and so on...
+					
+					The list of items that is returned depends upon your query and there are 2 main ways to 
+					request structured results
+					
+						- including contents
+						
+								this is the more general of the 2 approaches - it loads all children for matching items
+								
+									load media_collection with contents 
+									from /work/media/vault
+									
+									(loads media_collection objects from a folder and includes everything below each media collection)
+						
+								this does the query in two stages
+								first it loads the items that match the actual query (based on item_type,location and clause)
+								second it loads any item that is a child of things that matched the query
+								
+						- loading a tree
+									
+								this is more specific - you set the types of item that will be used and each item
+								in the returned structure must match the clause
+								
+									load media_collection, film, photo as tree
+									from /work/media/vault
+									where
+										film.year = 2009
+										and
+										photo.year = 2009
+										
+									(loads media_collections that contain films or photos from 2009)
+									
+								in the above example - the query will have looked at the schema to notice
+								that films and photos live in media_collections - therefore any photo that is
+								returned by the query that does not live in a media_collection will not be
+								returned - we are specifically building a tree of the items using the structure in the schema
+					
+					Both methods result in the same - a list of top level items each containing the children
+					that also matched the query
+					
+					using the photos example above we could do:
+					
+						load /holidayphotos with contents
+						
+					This would load the top-level photos folder but also include all folders & photos below it
+					
+					You would only get 1 item back from this query - i.e. the folder /holidayphotos
+					
+					This would contain a children array of 2 folders (/italy and /france)
+					
+						Each would then contain a children array of some folders (/paris, /rome etc)
+						
+							Each would then contain a children array of some images (photo1 photo3 etc)
+							
+					NOTE - you cannot use with content and as tree together - they are mutually exclusive
+					
+		---------------------------------------------------------------------------------------------------------------------									
+							
+			- load items with their contents
+			
+					this is best used when you know of some items you want that match a particular query
+					but you want the matching items to include all children by default
+					
+					so - if you have a folder and want everything beneath it you can say:
+					
+						load /myfolder with contents
+						
+					one item matches the actual query /myfolder - but it then goes on to load all children for each result
+					
+					so we get back one item that contains a recursive children array
+					
+					if you want a list of items including their children from within one folder you would use:
+					
+						load anything with contents
+						from /somefolder 
+						
+					This would return a list of the items that live directly inside of /somefolder and each item would
+					contain its children array
+					
+					This is sort of the same as 'load /myfolder with contents'
+					except you don't get /myfolder itself as the return item - rather you get a list of items just below /myfolder
+					
+						load social_groups with contents
+						from /users
+						
+					This only gets social_group items and their children - not everything
+					
+						load product_group with contents
+						where product_group.supplier = 'gjones'
+						
+					This gets all product_groups with a specific supplier but from anywhere - and loads their children
+					
+		---------------------------------------------------------------------------------------------------------------------									
+							
+			- load a tree
+				
+					there may be times when you want to selectively build a tree of item depending upon selective constraints
+					that change depending on the type of item.
+					
+					for example - imagine we wanted only categories where season = summer and products where color = red
+					
+					we also know that products belong in categories because we created the Model this way
+					
+						load tree(category,product) 
+						from /shop
+						where
+							category.season = 'summer'
+							and
+							product.color = 'red'
+							
+					Getting flat lists of items
+					-------------------------------------------------------------------	
+					if we didn't say tree() then we would get a flat list of intermingled categories and products
+					that are either summer or red (it becomes an OR because we have mixed item_types in the clause)
+					
+					in fact we would only get categories because only they live inside the shop folder
+					
+					Without using tree() we are ignoring any parent / child links that exist in the results
+					
+					Getting structured items
+					-------------------------------------------------------------------	
+					By using tree() the results are processed into parent + child relationships and the top-level
+					items are returned.
+					
+					So - in our example - we would get an array of category items each containing an array of product items
+					
+					Each category would be 'summer' and each product within it would be 'red'
+					
+					Top level items
+					-------------------------------------------------------------------	
+					A top level item is an item that has no parent and is allowed to have no parent
+					
+					When you use tree() the item_types are processed to determine what are the 'top level' item_types
+					
+					it is up to you to get the query in the right context of your items - you must use your knowledge of
+					the Models you have created to build a tree based on what is in your database
+					
+					if you specify item_types in a tree query that make no logical sense - the result will make no logical sense : )
+					
+					A top level item type is one that has no natural parent listed in the query
+					i.e. an item_type that is above the other item types you have asked for
+					
+					
+					Item Filtering
+					-------------------------------------------------------------------	
+					The tree loader is keen to only provide back data that makes sense to your query
+					
+					This means is might have to discard data that matched the clause but has no place in the tree structure
+					
+					Perhaps there are products that match the query (i.e. are 'red') but that don't have a category
+					that also matches the query (i.e. that is 'summer')
+					
+					If we were not asking for a tree - then these 'orphan' products would be returned in the list alongside any matching
+					categories (because they match the query)
+					
+					Because we are asking for a tree - it will attempt to assign any non-top level item to its rightful parent
+					and if that parent is not there - it will assume the parent didn't match the query and therefore its children
+					should not match either
+					
+					Likewise a parent with no children that should have some children is filtered out to avoid having phantom data
+					structures in your results (i.e. empty categories)
+					
+					This is to avoid the cross matching of clauses asked for different tables
+					
+					For example
+					
+						load category, product as tree
+						from /shop/christmas
+						where category.season = 'winter'
+						and product.color = 'red'
+						
+					Simple enough - we want a tree containing winter categories that only contain products that are red
+					
+					Problem is we will get items that are red that have a summer category - or categories that are winter but have
+					no red products
+					
+					So - the tree loader takes action into its own hands and gets brutal
+					
+						- Any item that should have a child but does not is discarded
+					
+						- Any item that should have a parent but does not is discarded
+					
+					Whether an item 'should' have children or a parent is a case of asking what items the query
+					wants and then asking the schema if that means it is at the top expecting children - or lower
+					down expecting either children but definitely a parent
+					
+					
+					Trees and Basedon / Inherits
+					-------------------------------------------------------------------	
+					you can use basedon or inherits inside of tree() to dictate a wider range of item_types to try and structure
+					
+						load tree(basedon(product),product_category)
+						where product.price > 100
+						
+					this would load all items based on product and product_categories - it would then check the schema
+					to find that products live inside of categories
+					
+					this means we would get back a list of categories containing products - even though the products might
+					be lots of different types of items based on different Models (but that inherit from product)
+					
+---------------------------------------------------------------------------------------------------------------------
+
+2.	from
+						
+[from (path[/*]|id|anywhere) [and below]]
+					
+		the from statement says where you are going to start looking for your items
+		
+		load 'what' from 'LOCATION' where 'clause'
+		
+		- paths
+		-------------------------------------------------------------------				
+		every item has at least one path - each representing where it lives in your system
+		
+		a path contains the name of every item from the very top down to where your item lives
+		
+		/work/media/portfolio/graphics/latest
+		
+		is a path - it could be to a folder containing other items (each with a longer version of the same path)
+		or it could be an item containing an image or in fact anything
+		
+		paths are created using the names of items - with all spaces and anything other than a-z removed, and then lowercased
+		
+		so if I had the following folders:
+		
+			My Work Stuff
+				Documents and cv
+					Latest copy ('edited')
+					
+		the path to the latest copy item inside of documents is:
+		
+			/myworkstuff/documentsandcv/latestcopyedited
+			
+		So - using paths - every item in your system has got an identifier which you can use in a query
+		to say you want children items from inside of it
+		
+		each item also has a database id that is unique to the item - this is shown on your system screen for the item
+		
+		you can use this id as an equivalent to the path although paths are recommeded as they are more flexible
+		
+		- using paths in your queries
+		-------------------------------------------------------------------				
+		the point of paths in queries is to dictate where you are looking for your items
+		
+		you can only specify one path in a query - if you are looking for things that live in lots of folders
+		- use specific item_types and a clause on a higher level folder
+		
+		there are two ways to use paths in a query
+		
+			- load items that live directly here
+			
+			- load items that live anywhere below here
+			
+		- getting items directly inside a path
+		-------------------------------------------------------------------		
+		this means that you are asking:
+		
+			give me the things that live directly here
+		
+			if you have folders:
+			
+				/work
+					/school
+						/maths
+						/science
+					/homework
+					
+			and you say:
+				
+				load anything
+				from /work
+				
+			you will get a list of 2 folders - /school & /homework
+			
+		- getting items anywhere below a path
+		-------------------------------------------------------------------					
+			if you say:
+			
+				load anything
+				from /work/*
+				
+				or
+				
+				load anything
+				from /work and below
+		
+			you will get a list of 4 folders - /school, /maths, /science and /homework
+			
+			so - using this we are able to load things that level at any level below an item not just directly in it
+		
+		- paths and LIST results
+		-------------------------------------------------------------------					
+			it is important to notice that above we would get a LIST of folders not a STRUCTURE
+			
+			because we didn't ask for a tree or with contents - we will get a list of every item that
+			matches the query - irrespective of where it lives
+			
+			this is useful if you want to grab items from your system that are scattered in various folders
+			
+				load products,offers,customers
+				from anywhere
+				
+			would give you a flat list of three types of item - without caring where they live
+			
+				load products,offers,customers
+				from /shop/retail/*
+				
+			would give you a flat list of different items from anywhere below a given folder
+			
+		- paths and STRUCTURE results
+		-------------------------------------------------------------------					
+			sometimes - we want structured results that are loaded from various places using the techniques above
+			
+			in this case we must combine paths with a tree or contents statement
+			
+				load collection and contents
+				from /work/peter/*
+				
+			this would give us collections that live anywhere below the peter folder but would return them as structured results
+			with all children intact
+			
+				load tree(category,product) 
+					from /shop/*
+					where
+						category.season = 'summer'
+						and
+						product.color = 'red'
+						
+			this means we would get categories that live anywhere below shop but that match the query and have children that match the query
+			
+
+---------------------------------------------------------------------------------------------------------------------
+
+3.	where|matching
+						
+[where|matching (clause)]
+
+		the where statement says what must be true about items that get returned
+		
+		load 'what' from 'location' where 'CLAUSE'
+		
+		think of the where statement as a filter - it acts as a gateway items must pass through before they are
+		returned to you
+		
+		the where clause is written in standard logical syntax similar to SQL
+		
+		the difference lies in the field names you are asking questions of
+		
+		- item fields
+		-------------------------------------------------------------------				
+		a typical statement might be:
+		
+			load basedon(product)
+			from /shop/*
+			where
+				price < 100
+				
+		this is asking the question - is your price less than 100?
+		
+		how do you know what questions you can ask?
+		
+		It depends entirely on the fields you have created in your Models...
+		
+		So - because we created the product Model- we know that every product 
+		(even if it is different and based on the product Model)
+		will have a price field and perhaps a rating field also
+		
+		You can ask a question of any field you know the items in your query contain
+		
+			load basedon(product)
+			from /shop/*
+			where
+				price < 100
+				and
+				year(released) = 2009
+				and
+				rating > 3
+				
+		In this case if an item dosn't have a rating field it won't match the query
+				
+		- specific item properties
+		-------------------------------------------------------------------		
+		if you want to load several types of item and write a clause that is selective about
+		what type an item is before being asked any questions - you need to use specifically named properties
+		
+			load blog_entry,product_review,journal_story
+			from /work/*
+			where
+				year(created) = 2009
+				and blog_entry.tag = 'red'
+				and product_review.product_name contains 'red'
+				and journal_story.headline contains 'red'
+				
+		this means that you have different criteria depending on what the item_type is
+		you don't want to ask a blog_entry what its product_name is because it dosn't have a product_name
+		
+		so - using Model names in your where clause means that portion of the query will only apply those types
+		of item
+		
+		if you use basedon or inherits it will automatically apply to model names used here
+			
+---------------------------------------------------------------------------------------------------------------------
+
+4.	limit|maximum
+
+		specifies a maximum number of items to return
+		
+---------------------------------------------------------------------------------------------------------------------
+
+5.	order|order by|sort|sort by
+						
+[order|order by|sort|sort by (order)]
+
+		specifies the ordering criteria which the items should be ordered by
+		
+		each item knows how to order its own children so when a structured result is created
+		the children of each item will be ordered correctly
+		
+		however - the top level items have no parent to order them so this will dictate the order
+		the items that get retured to you (always an array) are in
+		

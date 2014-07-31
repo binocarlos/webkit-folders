@@ -1,0 +1,37 @@
+changelog - 21-10-2009
+		
+Ext App
+
+- 	fixed the folderDataView so the drag area expands to fill the content area
+
+- 	added TabPanel to folderView so it can display multiple views for one folder
+
+- 	changed the menu layout - created top level menu and added icons to menu buttons
+
+- 	changed the treeIcon CSS mechanism by dynamically creating the icon CSS on demand 
+	rather than the server request
+	
+Kohana App
+
+-	made schema.php into a proper model without all the static methods
+
+-	created a simpleORM model that does ORM without all the hassle : )
+
+-	changed the Item model into a simpleORM and created Keyword Model
+
+-	streamlined the Query_Model so it loads up Item Models by default and interrogates the schema properly
+		-	changed the Query_Model language to:
+		
+				select 	[what types of item]
+				from	[the location to load from]
+				where	[the clause to match items against]
+				
+		-	this is getting ready for when items have true paths (e.g. /products/furniture)
+			and you can say something like
+			
+				select products
+				from /products/furniture
+
+-	started to change the way the system asks for items so everything goes through the Query_Model
+		- 	for example - in the admin/item_controller - to ask for an items children before it would load the data manually
+			now it issues a select * from $id statement to the Query_Model and it looks after it

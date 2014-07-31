@@ -1,0 +1,157 @@
+note - 
+
+the tree loader must assume that you mean /* so it can get items below for the tree
+
+so - if you say
+
+	load parent,child as tree
+	from /folder
+	
+you want only parents that live directly in /folder - not if a parent lives beneath
+
+so - the filter must exclude top-level items that don't match the from statement
+
+if the from statement includes /* or and below - then any top-level item matches
+
+---------------------------------------------------------------------------
+
+Single Loader
+
+	------------------------------------
+	load /work/item
+	
+	-	match pathname to item id and load item with keywords
+	
+	-	build item
+	
+	-	return single item
+	------------------------------------
+	load /work/item/*
+	
+	-	INVALID - this syntax is explicitly for a single item
+	------------------------------------
+	load /work/item and contents
+	
+	-	match pathname to item id - load item path info
+	
+	-	use item path info to load item and all items in its path
+	
+	-	load keywords using same query
+	
+	-	build items
+	
+	-	build tree of results
+	
+	-	return single item with children
+	------------------------------------
+
+---------------------------------------------------------------------------	
+
+List Loader
+
+	------------------------------------
+	load anything
+	from /work
+	
+	or
+	
+	load blog_entry,journal_story
+	from /work/*
+	
+	-	match pathname to item id or root folder - load item path info
+	
+	-	create clause combining path info - i.e. anything below item_id or just in item_id
+	
+	-	load items matching clause
+	
+	-	load keywords using same query
+	
+	-	build items
+	
+	-	return array of items
+	
+
+---------------------------------------------------------------------------	
+
+Contents Loader
+
+
+	------------------------------------
+	load widget_guide with children
+	from /widgetguides
+	
+	or
+	
+	load widget_guide with children
+	where color = 'red'
+	
+	-	match pathname to item id or root folder - load item path info
+	
+	-	create clause combining path info
+	
+	- 	load items matching clause
+	
+	-	load keywords matching clause
+	
+	-	load items in path of items maching clause
+	
+	-	load keywords for items in path of items maching clause
+	
+	-	build items
+	
+	-	build tree
+	
+	-	return array of items with children
+
+	
+---------------------------------------------------------------------------	
+
+Tree Loader	
+	
+	------------------------------------
+	load widget_guide,widget_guide_step as tree
+	from /widgetguides
+	where widget_guide.year = 2009
+	and widget_guide_step.color = 'red'
+	
+	-	match pathname to item id or root folder - load item path info
+	
+	-	create clause combining path info
+	
+	- 	load skeleton items matching clause
+	
+	-	build skeleton tree and check its integrity
+	
+	-	load items matching clause exluding ones removed above
+	
+	-	load keywords matching clause exluding ones removed above
+	
+	-	build items
+	
+	-	build tree
+	
+	-	return array of items with children
+	
+---------------------------------------------------------------------------		
+
+Tree Loader Notes
+
+
+
+1. 	get meta-data for all items that all least match the query (type,path+clause)
+	meta-data includes path info as permissions info
+
+2.	build a view of the result-set into a tree
+
+3.	identify which items should be removed from the tree
+	this could be because
+	
+		- permissions
+		- parent is missing and schema + query says it should be there
+		- item has no children and schema + query says there should be
+
+4. 	reapply the query excluding paths of items just removed from the view
+
+5.	apply the query to the keyword table to get fields for results
+
+6.	build results
