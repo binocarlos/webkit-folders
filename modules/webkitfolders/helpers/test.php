@@ -2,6 +2,9 @@
 
 $apikey = file_get_contents("/etc/mailgunapikey.conf");
 $domain = file_get_contents("/etc/mailgundomain.conf");
+$apikey = trim(preg_replace('/\s\s+/', ' ', $apikey));
+$domain = trim(preg_replace('/\s\s+/', ' ', $domain));
+$apikey
 $from="bob@bob.com";
 $to="kaiyadavenport@gmail.com";
 $subject="apples";
