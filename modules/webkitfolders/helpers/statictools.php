@@ -96,7 +96,7 @@ class statictools
 		$header .= "Reply-To: $from\n";
 		$header .= "X-Mailer: PHP5\n";
 
-		ini_set ( "SMTP", "mail.wk1.net" );
+		ini_set ( "SMTP", "postfix" );
 		
 		if(mail($to,$subject,$body,$header))
 		{
