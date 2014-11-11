@@ -1,7 +1,7 @@
 <?php 
 
-$apikey = $_ENV["MAILGUN_APIKEY"];
-$domain = $_ENV["MAILGUN_DOMAIN"];
+$apikey = file_get_contents("/etc/mailgunapikey.conf");
+$domain = file_get_contents("/etc/mailgundomain.conf");
 $from="bob@bob.com";
 $to="kaiyadavenport@gmail.com";
 $subject="apples";
@@ -15,7 +15,6 @@ $arr = array(
 );
 
 $cmd = implode(" ", $arr);
-
-#exec($cmd);
+exec($cmd);
 echo "$cmd";
 ?>

@@ -92,10 +92,8 @@ class statictools
 	#api:key-45zz-57e7xtgt-4oxw856uibn2x3gb77' https://api.mailgun.net/v2/mailgun.wk1.net/messages
 	public function SendEmail($from, $to, $subject, $body)
 	{
-    my $apikey = "";
-    my $domain = "";
-    open (KEYFILE, '/etc/mailgunapikey.conf'); while (<KEYFILE>) { chomp; $apikey = $_; } close (KEYFILE);
-    open (DOMAINFILE, '/etc/mailgundomain.conf'); while (<DOMAINFILE>) { chomp; $domain = $_; } close (DOMAINFILE);
+    $apikey = file_get_contents("/etc/mailgunapikey.conf");
+    $domain = file_get_contents("/etc/mailgundomain.conf");
 
     $arr = array(
       "curl -s --user '$apikey' https://api.mailgun.net/v2/$domain/messages",
