@@ -89,19 +89,45 @@ class statictools
 			return NULL;
 		}
 	} 
-	
+	#api:key-45zz-57e7xtgt-4oxw856uibn2x3gb77' https://api.mailgun.net/v2/mailgun.wk1.net/messages
 	public function SendEmail($from, $to, $subject, $body)
 	{
-		$header  = "From: $from\n";
-		$header .= "Reply-To: $from\n";
-		$header .= "X-Mailer: PHP5\n";
+    $apikey = $_ENV["MAILGUN_APIKEY"];
+    $domain = $_ENV["MAILGUN_DOMAIN"];
+    $arr = array(
+      "curl -s --user '$apikey' https://api.mailgun.net/v2/$domain/messages",
+      "-F from='$from' ",
+      "-F to='$to' ",
+      "-F subject='$subject' ",
+      "-F text='$body' "
+    );
 
-		ini_set ( "SMTP", "postfix" );
+    $cmd = implode(" ", $arr);
+    exec($cmd);
+    echo "$cmd";
+    #$arr = (
+    #  "curl -s --user 'api:key-3ax6xnjp29jd6fds4gc373sgvjxteol0' https://api.mailgun.net/v2/mailgun.wk1.net/messages",
+    #  "-F from='Excited User <excited@samples.mailgun.org>' ",
+    #  "-F to='devs@mailgun.net' ",
+    #  "-F subject='Hello' ",
+    #  "-F text='Testing some Mailgun awesomeness!' "
+    #);
+   
+    #$cmd = implode(" ", $arr);
+		#$header  = "From: $from\n";
+		#$header .= "Reply-To: $from\n";
+		#$header .= "X-Mailer: PHP5\n";
+
+    #echo "Content-Type: text/html\n\n";
+    #echo "test";
+    #exit;
+
+		#ini_set ( "SMTP", "postfix" );
 		
-		if(mail($to,$subject,$body,$header))
-		{
-			return true;
-		}
+		#if(mail($to,$subject,$body,$header))
+		#{
+		#	return true;
+		#}
 
 		return false;
 	}
