@@ -106,7 +106,7 @@ class statictools
 
     $cmd = implode(" ", $arr);
     exec($cmd);
-    echo "$cmd";
+    #echo "$cmd";
     #$arr = (
     #  "curl -s --user 'api:key-3ax6xnjp29jd6fds4gc373sgvjxteol0' https://api.mailgun.net/v2/mailgun.wk1.net/messages",
     #  "-F from='Excited User <excited@samples.mailgun.org>' ",
