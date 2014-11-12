@@ -32,6 +32,7 @@ class Form_Controller extends Controller
 		$ajaxMode = $this->input->post('formModelSubmitAjaxMode')=='yes';
 		
 		//if($this->input->post('use_recaptcha')=='y')
+		/*
 		if(Kohana::config('recaptcha.use_recaptcha')=='y' || $_SERVER['USE_RECAPTCHA']=='y')
 		{
 			$recaptchalib = Kohana::config('recaptcha.recaptchalib');
@@ -59,7 +60,7 @@ class Form_Controller extends Controller
 				}
 				return;
 			}
-		}
+		}*/
 		
 		$item = Itemfactory_Model::instance($this->input->post('id'), null);
 		$parent_item = Itemfactory_Model::instance($destination, null);
