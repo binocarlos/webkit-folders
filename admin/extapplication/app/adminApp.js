@@ -1132,13 +1132,9 @@ Ext.extend(Webkit.Folders.AdminApp, Webkit.Folders.App,
 	
 	languageMenuClicked: function(menuItem, e)
 	{
-		if(menuItem.id == 'root-language-us')
+		if(menuItem.id == 'global-update')
 		{
-			alert('English');
-		}
-		if(menuItem.id == 'root-language-de')
-		{
-			alert('German');
+			this.openGlobalUpdateWindow();
 		}
 	},	
 	
@@ -1180,6 +1176,15 @@ Ext.extend(Webkit.Folders.AdminApp, Webkit.Folders.App,
 		Ext.Msg.alert(this.appTitle, messageHTML);
 	},
 	
+  openGlobalUpdateWindow: function()
+	{
+		var theDate = new Date();
+		
+		var messageHTML = '<div style="margin-top:10px;width:400px;">Global Datacenters updating...<br/><br/><iframe src="../update.php" width="400" height="100" frameborder="0"></iframe></div>';
+		Ext.MessageBox.minWidth = 400;
+		
+		Ext.Msg.alert(this.appTitle, messageHTML);
+	},
 	
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1386,17 +1391,15 @@ Ext.extend(Webkit.Folders.AdminApp, Webkit.Folders.App,
     	this.languageMenu = new Ext.menu.Menu({
         	id: 'root-language-menu',
         	items: [{
-        		id: 'root-language-us',
-        		icon: Webkit.Folders.IconFactory.makeIconURI({name:'flag_us'}),
-        		text: Webkit.Folders.Language.getLabel('mainmenu_language_us')
-        		},{
-        		id: 'root-language-de',
-        		icon: Webkit.Folders.IconFactory.makeIconURI({name:'flag_de'}),
-        		text: Webkit.Folders.Language.getLabel('mainmenu_language_de')
-        	}]
+        		id: 'global-update',
+        		icon: Webkit.Folders.IconFactory.makeIconURI({name:'upload'}),
+        		text: 'Global update'
+        		}]
         });
          
         this.languageMenu.addListener('itemclick', this.languageMenuClicked, this); 
+        
+
         
         var panelConfig = {
 			height:53,
@@ -1440,19 +1443,21 @@ Ext.extend(Webkit.Folders.AdminApp, Webkit.Folders.App,
         
         this.titlePanel.add('->');
 
+
         this.titlePanel.add({
-        	  //text: Webkit.Folders.Language.getLabel('mainmenu_language'),
+        	  text: 'Update',
             width: 50,
             iconAlign: 'top',
             scale: 'medium',
             icon: Webkit.Folders.IconFactory.makeIconURI({
-            	name: Webkit.Folders.Language.getLabel('icon'),
+            	name: 'data_refresh',
             	scale: 'medium'
             }),
             style: 'margin-right: 10px;',
             height: 48,
             menu: this.languageMenu
-        });	 
+        });	
+ 
                
         this.titlePanel.add({
             //text: Webkit.Folders.Language.getLabel('mainmenu_help'),
